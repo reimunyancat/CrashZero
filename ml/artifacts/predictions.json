@@ -1,0 +1,86 @@
+[
+  {
+    "link_id": 3501601,
+    "highway": "tertiary",
+    "name": "문래동 회전교차",
+    "risk": 0.09471944066215669,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501101,
+    "highway": "primary",
+    "name": "영등포로 남행",
+    "risk": 0.08833376258187176,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3502301,
+    "highway": "primary",
+    "name": "국회대로",
+    "risk": 0.06440433458516283,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501203,
+    "highway": "primary",
+    "name": "경인로",
+    "risk": 0.06400799353929006,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501712,
+    "highway": "secondary",
+    "name": "영중로",
+    "risk": 0.05883027632203868,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501418,
+    "highway": "secondary",
+    "name": "당산로",
+    "risk": 0.052664626831133654,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501502,
+    "highway": "secondary",
+    "name": "대림로 상행",
+    "risk": 0.05229203226311731,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3502115,
+    "highway": "tertiary",
+    "name": "신길로",
+    "risk": 0.05154267500174981,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3502405,
+    "highway": "trunk",
+    "name": "제2산업도로",
+    "risk": 0.049798240728093725,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3502207,
+    "highway": "trunk",
+    "name": "여의대로",
+    "risk": 0.04520645204342102,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3502001,
+    "highway": "primary",
+    "name": "양평로 남행",
+    "risk": 0.04268688359648049,
+    "risk_band": "very_low"
+  },
+  {
+    "link_id": 3501814,
+    "highway": "trunk",
+    "name": "섬유도로",
+    "risk": 0.04242262723233673,
+    "risk_band": "very_low"
+  }
+]

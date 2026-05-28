@@ -1,0 +1,7 @@
+# CrashZero ML pipeline — minimal deps.
+# Sandbox has: numpy, pandas, matplotlib, Pillow (no scipy/sklearn/xgboost/lightgbm/shap).
+# All algorithms are reimplemented in pure NumPy so the pipeline runs in the sandbox.
+numpy>=1.26
+pandas>=2.2
+matplotlib>=3.8
+Pillow>=10.0

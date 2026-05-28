@@ -1,0 +1,37 @@
+{
+  "generated_at": 1779926466,
+  "feature_names": [
+    "highway_class_base",
+    "length_km",
+    "blackspot_proximity",
+    "peak_flag",
+    "season_winter",
+    "season_summer",
+    "has_signal_nearby"
+  ],
+  "n_links": 12,
+  "latest_year": 2025,
+  "model_hash": "eb1b5573fbfd0c0b",
+  "metrics": {
+    "feature_names": [
+      "highway_class_base",
+      "length_km",
+      "blackspot_proximity",
+      "peak_flag",
+      "season_winter",
+      "season_summer",
+      "has_signal_nearby"
+    ],
+    "train_rows": 288,
+    "val_rows": 96,
+    "test_rows": 96,
+    "logistic_auc_val": 0.6179775280898876,
+    "logistic_brier_val": 0.06715074605521722,
+    "boost_auc_val": 0.5906902086677368,
+    "boost_brier_val": 0.06749118341736073,
+    "boost_auc_test": 0.6791208791208792,
+    "boost_brier_test": 0.049160528247784614,
+    "n_stumps": 80,
+    "lr": 0.1
+  }
+}
