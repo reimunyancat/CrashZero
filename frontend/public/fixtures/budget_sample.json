@@ -1,0 +1,16 @@
+{
+  "_note": "데모 fixture · 실데이터 아님",
+  "source": "fixture",
+  "budget_billion": 48,
+  "spent_billion": 47.42,
+  "remaining_billion": 0.58,
+  "total_ead_avoided": 1.46,
+  "scenario": "B",
+  "rows": [
+    { "link_id": "3501101", "name": "영등포로 남행", "baseline_risk": 0.812, "intervention_id": "traffic_signal", "cost_billion": 0.55, "ead_avoided": 0.022, "cost_per_ead": 25.0, "cumulative_cost": 0.55, "cumulative_ead": 0.022 },
+    { "link_id": "3501203", "name": "경인로", "baseline_risk": 0.692, "intervention_id": "crosswalk", "cost_billion": 0.28, "ead_avoided": 0.014, "cost_per_ead": 20.0, "cumulative_cost": 0.83, "cumulative_ead": 0.036 },
+    { "link_id": "3501418", "name": "당산로", "baseline_risk": 0.611, "intervention_id": "speed_bump", "cost_billion": 0.18, "ead_avoided": 0.009, "cost_per_ead": 20.0, "cumulative_cost": 1.01, "cumulative_ead": 0.045 },
+    { "link_id": "3501502", "name": "대림로 상행", "baseline_risk": 0.564, "intervention_id": "median_barrier", "cost_billion": 0.72, "ead_avoided": 0.028, "cost_per_ead": 25.7, "cumulative_cost": 1.73, "cumulative_ead": 0.073 },
+    { "link_id": "3501601", "name": "문래동 회전교차", "baseline_risk": 0.488, "intervention_id": "school_zone", "cost_billion": 0.65, "ead_avoided": 0.024, "cost_per_ead": 27.1, "cumulative_cost": 2.38, "cumulative_ead": 0.097 }
+  ]
+}

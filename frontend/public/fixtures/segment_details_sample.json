@@ -1,0 +1,23 @@
+{
+  "_note": "데모 fixture · 실데이터 아님",
+  "source": "fixture",
+  "link_id": "3501101",
+  "name": "영등포로 남행",
+  "highway": "primary",
+  "risk": 0.812,
+  "risk_band": "very_high",
+  "baseline_highway_risk": 0.32,
+  "length_m": 412,
+  "ead_baseline": 0.146,
+  "contributions": [
+    { "feature": "인근 사고다발구역 (≤0.3km)", "value": 0.224 },
+    { "feature": "주간 통행량 상위 10%", "value": 0.118 },
+    { "feature": "신호교차로 속도 편차 큰 구간", "value": 0.087 },
+    { "feature": "스쿼존 반경 100m", "value": 0.053 }
+  ],
+  "history": [
+    { "year": 2022, "accidents": 8, "severe": 1 },
+    { "year": 2023, "accidents": 11, "severe": 2 },
+    { "year": 2024, "accidents": 9, "severe": 1 }
+  ]
+}

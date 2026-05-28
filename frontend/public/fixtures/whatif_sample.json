@@ -1,0 +1,13 @@
+{
+  "_note": "데모 fixture · 실데이터 아님",
+  "source": "fixture",
+  "link_id": "3501101",
+  "baseline_risk": 0.812,
+  "applied": ["traffic_signal", "crosswalk"],
+  "scenario_a_risk": 0.561,
+  "scenario_b_risk": 0.598,
+  "reduction_pct": 0.263,
+  "cost_billion": 0.83,
+  "ead_avoided": 0.038,
+  "notes": "Scenario A는 학습된 모델 재예측, Scenario B는 FHWA CMF 근거 계산이에요."
+}
