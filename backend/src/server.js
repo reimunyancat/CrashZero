@@ -8,6 +8,7 @@ import { getFeatures, clearCache } from './services/featureCache.js';
 import { runWhatIf } from './services/whatif.js';
 import { runBudget } from './services/budget.js';
 import { loadCatalog } from './services/cmf.js';
+import { scenarioARunner, hasModel, getModelManifest, getModelRiskTable } from './services/scenarioARunner.js';
 
 const app = express();
 app.use(cors({ origin: env.allowedOrigins, credentials: true }));
@@ -16,6 +17,20 @@ app.use(morgan('tiny'));
 
 app.get('/health', (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), node: process.version });
+});
+
+app.get('/model', async (_req, res, next) => {
+  try {
+    const m = await getModelManifest();
+    const table = await getModelRiskTable();
+    res.json({
+      loaded: Boolean(table && table.size),
+      n_links: table ? table.size : 0,
+      manifest: m,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get('/cmf-catalog', async (_req, res, next) => {
@@ -50,8 +65,7 @@ app.post('/whatif', async (req, res, next) => {
       link_ids: body.link_ids,
       interventions: body.interventions,
       scenario: body.scenario,
-      // Scenario A runner is wired to ML artifact in production; absent here.
-      scenarioARunner: undefined,
+      scenarioARunner: (await hasModel()) ? scenarioARunner : undefined,
     });
     res.json({ results, scenario: body.scenario });
   } catch (err) {

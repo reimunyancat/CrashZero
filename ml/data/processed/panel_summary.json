@@ -1,12 +1,22 @@
 {
-  "rows": 480,
-  "links": 12,
-  "positive_rate": 0.06041666666666667,
+  "rows": 450,
+  "positives": 225,
+  "negatives": 225,
+  "yeongdeungpo_positives": 9,
   "years": [
-    2021,
     2022,
     2023,
-    2024,
-    2025
-  ]
+    2024
+  ],
+  "features": [
+    "highway_class_base",
+    "nearest_segment_dist_m",
+    "school_zone_count_300m",
+    "log_nearest_school_zone_dist",
+    "cctv_count_300m",
+    "blackspot_count_500m",
+    "mean_occrrnc_500m",
+    "is_yeongdeungpo"
+  ],
+  "neg_skipped": 0
 }

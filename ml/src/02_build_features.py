@@ -1,30 +1,13 @@
-"""CrashZero ML step 2: build the (link_id, year, season, peak_offpeak) panel.
-
-Features (HSM-inspired):
-  * highway_class_base
-  * length_km
-  * blackspot_proximity
-  * peak_flag
-  * season_winter / season_summer
-  * has_signal_nearby (placeholder, filled from V-World when available)
-
-Target: accident_flag (0/1) per panel row. Simulated from blackspot influence
-when real label data is missing in the sandbox.
-
-The processed panel is saved as CSV (always works) and also as parquet when
-pyarrow is installed.
-"""
 from __future__ import annotations
-
 import json
 import math
+import random
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
-RAW = ROOT / 'ml' / 'data' / 'raw'
+NORM = ROOT / 'ml' / 'data' / 'norm'
 PROC = ROOT / 'ml' / 'data' / 'processed'
 PROC.mkdir(parents=True, exist_ok=True)
 
@@ -35,171 +18,163 @@ HIGHWAY_BASE_RISK = {
     'cycleway': 0.11, 'footway': 0.10, 'path': 0.09, 'steps': 0.08,
 }
 
+FEATURES = [
+    'highway_class_base',
+    'nearest_segment_dist_m',
+    'school_zone_count_300m',
+    'log_nearest_school_zone_dist',
+    'cctv_count_300m',
+    'blackspot_count_500m',
+    'mean_occrrnc_500m',
+    'is_yeongdeungpo',
+]
 
-def haversine_km(a_lng, a_lat, b_lng, b_lat):
-    R = 6371.0
-    p1 = math.radians(a_lat)
-    p2 = math.radians(b_lat)
-    dp = math.radians(b_lat - a_lat)
-    dl = math.radians(b_lng - a_lng)
-    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+
+def hav(lat1, lon1, lat2, lon2):
+    R = 6371000.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lon2 - lon1)
+    h = math.sin(dp/2)**2 + math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2
     return 2 * R * math.asin(math.sqrt(h))
 
 
-def influence_from_km(km):
-    if km <= 0.12:
-        return 0.7
-    if km <= 0.3:
-        return 0.48
-    if km <= 0.65:
-        return 0.24
-    if km <= 1.1:
-        return 0.1
-    return 0.0
+def seg_centroid(seg):
+    g = seg['geometry']
+    return g[len(g)//2]
 
 
-def load_segments():
-    overpass_path = RAW / 'overpass.json'
-    if overpass_path.exists():
-        data = json.loads(overpass_path.read_text(encoding='utf-8'))
-        out = []
-        for el in data.get('elements', []):
-            if el.get('type') != 'way' or not el.get('geometry'):
-                continue
-            link_id = '35' + str(el['id'])[-5:].rjust(5, '0')
-            out.append({
-                'link_id': link_id,
-                'highway': el.get('tags', {}).get('highway', 'unclassified'),
-                'name': el.get('tags', {}).get('name', ''),
-                'geometry': [[p['lon'], p['lat']] for p in el.get('geometry', [])],
-            })
-        return out
-    fixture = RAW / 'fixture.json'
-    if fixture.exists():
-        return json.loads(fixture.read_text(encoding='utf-8'))['segments']
-    raise FileNotFoundError('No raw data; run 01_fetch_data.py first')
+def seg_length_km(seg):
+    g = seg['geometry']
+    if len(g) < 2:
+        return 0.05
+    t = 0.0
+    for i in range(len(g) - 1):
+        t += hav(g[i][1], g[i][0], g[i+1][1], g[i+1][0])
+    return t / 1000.0
 
 
-def load_blackspots():
-    koroad = RAW / 'koroad.json'
-    if koroad.exists():
-        rows = json.loads(koroad.read_text(encoding='utf-8'))
-        out = []
-        for r in rows:
-            try:
-                lng = float(r.get('lo_crd') or r.get('x_crd') or 0)
-                lat = float(r.get('la_crd') or r.get('y_crd') or 0)
-            except (TypeError, ValueError):
-                continue
-            if not lng or not lat:
-                continue
-            out.append({
-                'id': r.get('spot_nm', ''),
-                'centroid': [lng, lat],
-                'severity': min(1.0, float(r.get('occrrnc_cnt', 0)) / 30.0),
-                'endpoint': r.get('endpoint', ''),
-            })
-        return out
-    fixture = RAW / 'fixture.json'
-    if fixture.exists():
-        return json.loads(fixture.read_text(encoding='utf-8')).get('blackspots', [])
-    return []
+def nearest_segment(lat, lon, segments):
+    best_d = 1e18
+    best = None
+    for s in segments:
+        c = seg_centroid(s)
+        d = hav(lat, lon, c[1], c[0])
+        if d < best_d:
+            best_d = d
+            best = s
+    return best, best_d
 
 
-def segment_centroid(geometry):
-    if not geometry:
-        return [0, 0]
-    mid = geometry[len(geometry) // 2]
-    return [mid[0], mid[1]]
+def school_features(lat, lon, schools):
+    cnt = 0
+    cctv = 0
+    widths = []
+    nearest = 1e18
+    for z in schools:
+        d = hav(lat, lon, z['lat'], z['lon'])
+        if d <= 300:
+            cnt += 1
+            cctv += int(z.get('cctv_count') or 0)
+            w = z.get('road_width') or 0
+            if w:
+                widths.append(w)
+        if d < nearest:
+            nearest = d
+    mean_w = (sum(widths) / len(widths)) if widths else 0.0
+    return cnt, min(nearest, 5000.0), cctv, mean_w
 
 
-def polyline_len_km(geometry):
-    if len(geometry) < 2:
-        return 0.0
-    total = 0.0
-    for i in range(len(geometry) - 1):
-        a = geometry[i]
-        b = geometry[i + 1]
-        total += haversine_km(a[0], a[1], b[0], b[1])
-    return total
+def blackspot_density(lat, lon, blackspots, exclude_id=None, radius=500.0):
+    cnt = 0
+    occ_sum = 0
+    for b in blackspots:
+        if exclude_id is not None and b['id'] == exclude_id:
+            continue
+        d = hav(lat, lon, b['centroid'][1], b['centroid'][0])
+        if d <= radius:
+            cnt += 1
+            occ_sum += int(b.get('occrrnc_cnt') or 0)
+    mean_occ = (occ_sum / cnt) if cnt else 0.0
+    return cnt, mean_occ
 
 
-def build_panel(segments, blackspots):
-    rng = np.random.default_rng(42)
-    rows = []
-    years = [2021, 2022, 2023, 2024, 2025]
-    seasons = ['winter', 'spring', 'summer', 'fall']
-    peaks = ['peak', 'offpeak']
-
-    for seg in segments:
-        base = HIGHWAY_BASE_RISK.get(seg['highway'], 0.18)
-        length_km = polyline_len_km(seg['geometry']) or 0.1
-        cx, cy = segment_centroid(seg['geometry'])
-        prox = 0.0
-        for bs in blackspots:
-            d = haversine_km(cx, cy, bs['centroid'][0], bs['centroid'][1])
-            inf = influence_from_km(d) * bs.get('severity', 0.5)
-            if inf > prox:
-                prox = inf
-
-        for year in years:
-            for season in seasons:
-                for peak in peaks:
-                    p_flag = 1 if peak == 'peak' else 0
-                    s_winter = 1 if season == 'winter' else 0
-                    s_summer = 1 if season == 'summer' else 0
-                    base_p = (
-                        base * 0.35
-                        + prox * 0.40
-                        + length_km * 0.05
-                        + p_flag * 0.10
-                        + s_winter * 0.08
-                        + s_summer * 0.04
-                    )
-                    base_p = max(0.01, min(0.95, base_p))
-                    label = 1 if rng.random() < base_p * 0.25 else 0
-                    rows.append({
-                        'link_id': seg['link_id'],
-                        'highway': seg['highway'],
-                        'name': seg.get('name', ''),
-                        'year': year,
-                        'season': season,
-                        'peak': peak,
-                        'highway_class_base': base,
-                        'length_km': length_km,
-                        'blackspot_proximity': prox,
-                        'peak_flag': p_flag,
-                        'season_winter': s_winter,
-                        'season_summer': s_summer,
-                        'has_signal_nearby': 0,
-                        'y': label,
-                    })
-    return pd.DataFrame(rows)
-
-
-def save_panel(df, base_path):
-    csv_path = base_path.with_suffix('.csv')
-    df.to_csv(csv_path, index=False)
-    try:
-        df.to_parquet(base_path.with_suffix('.parquet'), index=False)
-    except Exception as exc:
-        print(f'[02_build] parquet skipped ({exc.__class__.__name__}); using CSV')
+def build_row(label, sid, year, gugun_cd, lat, lon, segments, schools, blackspots, exclude_id=None, occ=0):
+    import math as _m
+    seg, seg_d = nearest_segment(lat, lon, segments)
+    sc_cnt, sc_d, sc_cctv, sc_w = school_features(lat, lon, schools)
+    bs_cnt, bs_mean_occ = blackspot_density(lat, lon, blackspots, exclude_id=exclude_id)
+    return {
+        'sample_id': sid,
+        'y': label,
+        'year': year,
+        'gugun_cd': gugun_cd,
+        'lat': round(lat, 7),
+        'lon': round(lon, 7),
+        'is_yeongdeungpo': 1 if gugun_cd == '560' else 0,
+        'highway_class_base': HIGHWAY_BASE_RISK.get(seg['highway'], 0.18),
+        'nearest_segment_dist_m': round(seg_d, 2),
+        'segment_length_km': round(seg_length_km(seg), 4),
+        'school_zone_count_300m': sc_cnt,
+        'nearest_school_zone_dist_m': round(sc_d, 2),
+        'log_nearest_school_zone_dist': round(_m.log1p(sc_d), 4),
+        'cctv_count_300m': sc_cctv,
+        'mean_road_width': round(sc_w, 3),
+        'blackspot_count_500m': bs_cnt,
+        'mean_occrrnc_500m': round(bs_mean_occ, 3),
+        'occrrnc_cnt': occ,
+        'link_id': seg['link_id'],
+        'highway': seg.get('highway', 'unclassified'),
+        'name': seg.get('name', ''),
+    }
 
 
 def main():
-    segments = load_segments()
-    blackspots = load_blackspots()
-    df = build_panel(segments, blackspots)
-    save_panel(df, PROC / 'panel')
+    blackspots = json.loads((NORM / 'koroad_blackspots.json').read_text(encoding='utf-8'))
+    schools = json.loads((NORM / 'school_zones_seoul.json').read_text(encoding='utf-8'))
+    segments = json.loads((NORM / 'road_segments.json').read_text(encoding='utf-8'))
+
+    pos_pts = [(b['centroid'][1], b['centroid'][0]) for b in blackspots]
+    rng = random.Random(42)
+    rows = []
+
+    for b in blackspots:
+        lon, lat = b['centroid']
+        rows.append(build_row(1, f"pos-{b['id']}", b['year'], b['gugun_cd'], lat, lon, segments, schools, blackspots, exclude_id=b['id'], occ=b['occrrnc_cnt']))
+
+    skipped = 0
+    for b in blackspots:
+        plat, plon = b['centroid'][1], b['centroid'][0]
+        placed = False
+        for k in range(50):
+            r = 0.005 + rng.random() * 0.013
+            theta = rng.random() * 2 * math.pi
+            dlat = r * math.cos(theta)
+            dlon = r * math.sin(theta) * 1.2
+            nlat, nlon = plat + dlat, plon + dlon
+            min_d = min(hav(nlat, nlon, p[0], p[1]) for p in pos_pts)
+            if min_d > 450:
+                rows.append(build_row(0, f"neg-{b['id']}-{k}", b['year'], b['gugun_cd'], nlat, nlon, segments, schools, blackspots, exclude_id=None, occ=0))
+                placed = True
+                break
+        if not placed:
+            skipped += 1
+
+    df = pd.DataFrame(rows)
+    df.to_csv(PROC / 'panel.csv', index=False)
     df.head(50).to_csv(PROC / 'panel_head.csv', index=False)
+
     summary = {
         'rows': int(len(df)),
-        'links': int(df['link_id'].nunique()),
-        'positive_rate': float(df['y'].mean()),
+        'positives': int((df['y'] == 1).sum()),
+        'negatives': int((df['y'] == 0).sum()),
+        'yeongdeungpo_positives': int(((df['y'] == 1) & (df['is_yeongdeungpo'] == 1)).sum()),
         'years': sorted(int(y) for y in df['year'].unique()),
+        'features': FEATURES,
+        'neg_skipped': skipped,
     }
     (PROC / 'panel_summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding='utf-8')
-    print(json.dumps(summary, indent=2))
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0
 
 

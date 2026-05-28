@@ -23,12 +23,13 @@ ART.mkdir(parents=True, exist_ok=True)
 
 FEATURES = [
     "highway_class_base",
-    "length_km",
-    "blackspot_proximity",
-    "peak_flag",
-    "season_winter",
-    "season_summer",
-    "has_signal_nearby",
+    "nearest_segment_dist_m",
+    "school_zone_count_300m",
+    "log_nearest_school_zone_dist",
+    "cctv_count_300m",
+    "blackspot_count_500m",
+    "mean_occrrnc_500m",
+    "is_yeongdeungpo",
 ]
 
 
@@ -46,7 +47,7 @@ class LogisticModel:
         return sigmoid(X @ self.w + self.b)
 
 
-def train_logistic(X, y, *, lr=0.05, epochs=400, weight_decay=1e-4):
+def train_logistic(X, y, *, lr=0.08, epochs=700, weight_decay=1e-5):
     rng = np.random.default_rng(0)
     n, d = X.shape
     w = rng.normal(0, 0.05, size=d)
@@ -102,7 +103,7 @@ def best_stump(X, residual):
     return best
 
 
-def train_boosting(X, y, base_logits, *, n_rounds=80, lr=0.1):
+def train_boosting(X, y, base_logits, *, n_rounds=140, lr=0.08):
     logits = base_logits.copy()
     stumps = []
     for _ in range(n_rounds):
@@ -157,9 +158,9 @@ def main() -> int:
     y = df["y"].to_numpy(dtype=float)
     years = df["year"].to_numpy()
 
-    train = years <= 2023
-    val = years == 2024
-    test = years == 2025
+    train = years == 2022
+    val = years == 2023
+    test = years == 2024
 
     # Logistic baseline
     logistic = train_logistic(X[train], y[train])
