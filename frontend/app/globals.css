@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * CrashZero design tokens — preserved from designer's original palette.
+ * Risk scale, glow, panel translucency, and Arial+노토Sans KR stack are kept as-is
+ * so every redesigned component inherits the same look.
+ */
+:root {
+  color-scheme: dark;
+
+  --bg: #070b12;
+  --ink: #e5edf8;
+  --ink-muted: rgba(229, 237, 248, 0.62);
+  --ink-soft: rgba(229, 237, 248, 0.38);
+
+  --panel: rgba(15, 23, 42, 0.78);
+  --panel-strong: rgba(9, 14, 24, 0.92);
+  --panel-hover: rgba(30, 41, 59, 0.72);
+  --border: rgba(148, 163, 184, 0.12);
+  --border-strong: rgba(148, 163, 184, 0.24);
+
+  --selection: #8BCEFF;
+  --accent: #7da2ff;
+  --accent-blue: #60a5fa;
+
+  --glow: 0 0 36px rgba(96, 165, 250, 0.18);
+  --glow-strong: 0 0 48px rgba(96, 165, 250, 0.28);
+
+  --risk-very-high: #D34037;
+  --risk-high: #E6A14A;
+  --risk-medium: #EAE065;
+  --risk-low: #9ACA83;
+  --risk-very-low: #80B971;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(125, 162, 255, 0.10) 0%, transparent 42%),
+    radial-gradient(circle at 82% 88%, rgba(96, 165, 250, 0.08) 0%, transparent 48%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--selection);
+  color: #050810;
+}
+
+@layer components {
+  .glass-panel {
+    background: var(--panel);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--glow);
+  }
+
+  .glass-panel-strong {
+    background: var(--panel-strong);
+    backdrop-filter: blur(20px) saturate(125%);
+    -webkit-backdrop-filter: blur(20px) saturate(125%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 18px 60px rgba(2, 6, 23, 0.55);
+  }
+
+  .risk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-pill {
+    @apply px-3 py-1.5 rounded-md text-sm font-medium text-ink/70 transition-colors;
+  }
+  .nav-pill[data-active='true'] {
+    background: #7da2ff;
+    color: #050810;
+    box-shadow: var(--glow);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.22);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* MapLibre theme overrides so the basemap matches the dashboard. */
+.maplibregl-ctrl-attrib {
+  background: rgba(7, 11, 18, 0.72) !important;
+  color: rgba(229, 237, 248, 0.7) !important;
+  font-size: 11px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: rgba(189, 207, 255, 0.92) !important;
+}
+.maplibregl-popup-content {
+  background: var(--panel-strong) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--border);
+  border-radius: 12px !important;
+  box-shadow: var(--glow);
+  padding: 12px 14px !important;
+  font-size: 12.5px;
+}
+.maplibregl-popup-tip {
+  border-top-color: rgba(9, 14, 24, 0.92) !important;
+}
+.maplibregl-canvas:focus { outline: none; }
+
+/* Subtle animated outline used on the active blackspot pulse */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(211, 64, 55, 0.55); }
+  70%  { box-shadow: 0 0 0 12px rgba(211, 64, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(211, 64, 55, 0); }
+}
+.pulse-ring { animation: pulse-ring 1.8s infinite; }
