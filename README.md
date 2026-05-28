@@ -1,6 +1,6 @@
 # CrashZero
 
-영등포구 도로 교통사고 **위험 예측 → 개선책 시뮬레이션 → 예산 배분** 의사결정 대시보드.
+영등포구 도로 교통사고 **위험 예측 → 개선책 시뮬레이션 → 예산 배분**
 
 공공 데이터(공공데이터포털 KOROAD, V-World, KMA, OSM)와 자체 학습 위험도 모델을 결합해, 도로 단위 위험도를 예측하고 CMF(Crash Modification Factor) 기반 개선책의 효과·예산을 비교합니다.
 
@@ -57,14 +57,6 @@ python src/05_export_artifacts.py
 ```
 
 생성된 아티팩트(`ml/artifacts/*.json`)는 `frontend/public/artifacts/`로 복사해 사용됩니다.
-
-## 자세한 문서
-
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — 시스템 구성, 데이터 흐름, Dual-Scenario 설계
-- [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md) — 데이터셋·API·라이선스
-- [`docs/CMF_CATALOG.md`](docs/CMF_CATALOG.md) — Crash Modification Factor 출처(FHWA·AASHTO HSM)
-- [`docs/RUNBOOK.md`](docs/RUNBOOK.md) — 운영·재현·트러블슈팅 가이드
-- [`docs/HANDOFF.md`](docs/HANDOFF.md) — 인수인계 절차
 
 ## 라이선스
 
