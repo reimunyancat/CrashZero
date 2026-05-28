@@ -1,0 +1,56 @@
+{
+  "_note": "FHWA CMF Clearinghouse + KOROAD 국내 적용사례 기준 · 중간값 사용 권장",
+  "version": "1.0",
+  "interventions": [
+    {
+      "id": "traffic_signal",
+      "label": "신호교차로 설치/개선",
+      "description": "비신호 교차로→신호 전환, 신호주기/적색시간 최적화",
+      "reduction_range": [0.08, 0.22],
+      "cost_billion": 0.55,
+      "icon": "/icons/traffic-signal.svg",
+      "cmf_source": "FHWA CMF #4051"
+    },
+    {
+      "id": "crosswalk",
+      "label": "횝단보도 강화",
+      "description": "고혜도 도색, 보행자 신호등, 임의대기선",
+      "reduction_range": [0.05, 0.16],
+      "cost_billion": 0.28,
+      "icon": "/icons/crosswalk.svg",
+      "cmf_source": "FHWA CMF #5042"
+    },
+    {
+      "id": "median_barrier",
+      "label": "중앙분리대",
+      "description": "양방향 충돌 구간 대상, 중앙선 추돌 사고 감소",
+      "reduction_range": [0.12, 0.31],
+      "cost_billion": 0.72,
+      "icon": "/icons/median-barrier.svg",
+      "cmf_source": "FHWA CMF #314"
+    },
+    {
+      "id": "speed_bump",
+      "label": "과속방지턱·속도저감",
+      "description": "이면 도로 / 이면-주간선 결합 구간",
+      "reduction_range": [0.04, 0.14],
+      "cost_billion": 0.18,
+      "icon": "/icons/traffic-cone.svg",
+      "cmf_source": "FHWA CMF #2492"
+    },
+    {
+      "id": "school_zone",
+      "label": "어린이보호구역 강화",
+      "description": "30km/h 제한 · 불법주정차 단속 · 보행통로 확폭",
+      "reduction_range": [0.10, 0.28],
+      "cost_billion": 0.65,
+      "icon": "/icons/child-zone.svg",
+      "cmf_source": "KOROAD 2023 시범사업 + FHWA CMF #2783"
+    }
+  ],
+  "combine": {
+    "method": "multiplicative",
+    "cap": 0.62,
+    "_note": "여러 개선을 동시 적용해도 총 감소율을 62%로 상한으로 두어 HSM 권고치를 따릅니다."
+  }
+}
