@@ -86,7 +86,6 @@ export function SimulatorWorkspace() {
 
   const visibleBlackspots: Blackspot[] = useMemo(() => {
     if (!data) return [];
-    // Hide blackspots when user filters out very_high/high entirely.
     const showsTopRisk = bandFilter.has('very_high') || bandFilter.has('high');
     return showsTopRisk ? data.blackspots : [];
   }, [data, bandFilter]);
@@ -249,7 +248,7 @@ export function SimulatorWorkspace() {
             </div>
             <div className="ml-auto text-[11.5px] text-[var(--ink-soft)]">
               {isFixtureMode() ? 'fixture 모드 · ' : ''}
-              주 이동: 난이도 / 날씨·시간 필터는 곱셈적으로 잘 적용되어있어요.
+              날씨·시간대 필터는 곱셈적으로 적용돼요.
             </div>
           </div>
         </div>
