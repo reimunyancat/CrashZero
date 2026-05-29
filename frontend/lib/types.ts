@@ -26,6 +26,9 @@ export interface RoadSegment {
   link_id: string;
   name?: string;
   highway: RoadHighway;
+  source?: string;
+  osm_way_id?: number;
+  length_m?: number;
   geometry: LngLat[];
   /** Composite risk score in [0,1]; produced by ML model or fallback heuristics. */
   risk: number;
@@ -38,17 +41,24 @@ export interface RoadSegment {
   blackspot_distance_km?: number;
   /** Optional feature contributions surfaced by the model (SHAP-like). */
   contributions?: Array<{ feature: string; value: number }>;
+  blackspot_count_500m?: number;
+  mean_occrrnc_500m?: number;
+  school_zone_count_300m?: number;
+  cctv_count_300m?: number;
 }
 
 export interface Blackspot {
   id: string;
-  type: 'frequentzone_general' | 'frequentzone_child' | 'frequentzone_elderly' | 'frequentzone_vulnerable';
+  type?: 'frequentzone_general' | 'frequentzone_child' | 'frequentzone_elderly' | 'frequentzone_vulnerable';
   centroid: LngLat;
   radius_m: number;
   source_year: number;
   fatalities?: number;
   injuries?: number;
   crashes?: number;
+  severity?: number;
+  crash_count_3y?: number;
+  source_weight?: number;
   vulnerable_weight: number;
   label: string;
 }
