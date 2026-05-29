@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import maplibregl, { type Map as MLMap, type StyleSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import type { Blackspot, RoadSegment } from '@/lib/types';
+import type { RoadSegment } from '@/lib/types';
 import type { CSSProperties } from 'react';
 import { colorForScore, RISK_BAND_COLOR } from '@/lib/risk';
 
@@ -12,7 +12,6 @@ const pingDotStyle: CSSProperties = { backgroundColor: RISK_BAND_COLOR.very_high
 
 interface Props {
   segments: RoadSegment[];
-  blackspots: Blackspot[];
   onSelect?: (segment: RoadSegment) => void;
   selectedLinkId?: string | null;
 }
@@ -67,25 +66,7 @@ function segmentsToGeoJSON(segments: RoadSegment[]): GeoJSON.FeatureCollection {
   };
 }
 
-function blackspotsToGeoJSON(spots: Blackspot[]): GeoJSON.FeatureCollection {
-  return {
-    type: 'FeatureCollection',
-    features: spots.map((b) => ({
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: b.centroid },
-      properties: {
-        id: b.id,
-        type: b.type,
-        label: b.label,
-        radius_m: b.radius_m,
-        crashes: b.crashes ?? 0,
-        fatalities: b.fatalities ?? 0,
-      },
-    })),
-  };
-}
-
-export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: Props) {
+export function MapRiskView({ segments, onSelect, selectedLinkId }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -117,11 +98,6 @@ export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: 
         data: { type: 'FeatureCollection', features: [] },
         promoteId: 'link_id',
       });
-      map.addSource('blackspots', {
-        type: 'geojson',
-        data: { type: 'FeatureCollection', features: [] },
-      });
-
       // Outer glow stroke for high-risk roads (very_high / high only).
       map.addLayer({
         id: 'risk-glow',
@@ -168,25 +144,6 @@ export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: 
           'line-opacity': 0.9,
         },
       });
-      // Blackspot dashed outline.
-      map.addLayer({
-        id: 'blackspot-ring',
-        type: 'circle',
-        source: 'blackspots',
-        paint: {
-          'circle-radius': [
-            'interpolate', ['linear'], ['get', 'radius_m'],
-            50, 8,
-            200, 16,
-            400, 22,
-          ],
-          'circle-color': 'rgba(211, 64, 55, 0.08)',
-          'circle-stroke-color': '#D34037',
-          'circle-stroke-width': 1.6,
-          'circle-stroke-opacity': 0.85,
-        },
-      });
-
       // Hover → cursor + popup.
       const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
       map.on('mousemove', 'risk-line', (e) => {
@@ -219,13 +176,6 @@ export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: 
         const target = (segmentsRef.current ?? []).find((s) => s.link_id === linkId);
         if (target && onSelectRef.current) onSelectRef.current(target);
       });
-      // Blackspot click → fly to centroid.
-      map.on('click', 'blackspot-ring', (e) => {
-        const f = e.features?.[0];
-        if (!f) return;
-        const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates as [number, number];
-        map.flyTo({ center: [lng, lat], zoom: 15.5, speed: 0.9 });
-      });
     });
 
     return () => {
@@ -240,8 +190,6 @@ export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: 
   segmentsRef.current = segments;
 
   const segmentsGeoJson = useMemo(() => segmentsToGeoJSON(segments), [segments]);
-  const blackspotsGeoJson = useMemo(() => blackspotsToGeoJSON(blackspots), [blackspots]);
-
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -252,17 +200,6 @@ export function MapRiskView({ segments, blackspots, onSelect, selectedLinkId }: 
     if (map.isStyleLoaded()) apply();
     else map.once('idle', apply);
   }, [segmentsGeoJson]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const apply = () => {
-      const src = map.getSource('blackspots') as maplibregl.GeoJSONSource | undefined;
-      src?.setData(blackspotsGeoJson);
-    };
-    if (map.isStyleLoaded()) apply();
-    else map.once('idle', apply);
-  }, [blackspotsGeoJson]);
 
   useEffect(() => {
     const map = mapRef.current;

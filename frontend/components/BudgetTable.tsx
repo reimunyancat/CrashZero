@@ -9,6 +9,7 @@ import { rankInterventionsForSegment } from "@/lib/dualScenario";
 import type { BudgetResult, BudgetRow, RoadSegment } from "@/lib/types";
 import { colorForScore } from "@/lib/risk";
 import { formatBillion, formatNumber, formatPercent } from "@/lib/format";
+import { iconDimensions } from "@/lib/iconDimensions";
 
 function localGreedyBudget(
   segments: RoadSegment[],
@@ -261,12 +262,9 @@ export function BudgetTable() {
                       <td className="px-3 py-2">
                         <span className="flex items-center gap-1.5">
                           {opt?.icon ? (
-                            <Image
-                              src={opt.icon}
-                              alt=""
-                              width={14}
-                              height={14}
-                            />
+                            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+                              <Image src={opt.icon} alt="" {...iconDimensions(opt.icon)} />
+                            </span>
                           ) : null}
                           {opt?.label ?? row.intervention}
                         </span>
