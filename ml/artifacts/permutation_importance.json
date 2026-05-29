@@ -1,13 +1,17 @@
 {
-  "base_auc": 0.9096888888888889,
+  "base_auc": 0.9317333333333333,
   "rows": [
     {
       "feature": "mean_occrrnc_500m",
-      "auc_drop": 0.20479999999999998
+      "auc_drop": 0.29688888888888887
     },
     {
-      "feature": "blackspot_count_500m",
-      "auc_drop": 0.0030222222222221484
+      "feature": "cctv_count_300m",
+      "auc_drop": 0.0028444444444444272
+    },
+    {
+      "feature": "log_nearest_school_zone_dist",
+      "auc_drop": 0.0007111111111111068
     },
     {
       "feature": "highway_class_base",
@@ -18,20 +22,16 @@
       "auc_drop": 0.0
     },
     {
-      "feature": "log_nearest_school_zone_dist",
-      "auc_drop": 0.0
+      "feature": "blackspot_count_500m",
+      "auc_drop": -0.00017777777777794324
     },
     {
       "feature": "is_yeongdeungpo",
-      "auc_drop": 0.0
-    },
-    {
-      "feature": "cctv_count_300m",
-      "auc_drop": -0.0014222222222222136
+      "auc_drop": -0.0005333333333333856
     },
     {
       "feature": "nearest_segment_dist_m",
-      "auc_drop": -0.0165333333333334
+      "auc_drop": -0.011733333333333373
     }
   ]
 }

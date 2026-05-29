@@ -1,5 +1,5 @@
 {
-  "generated_at": 1779979744,
+  "generated_at": 1780030470,
   "feature_names": [
     "highway_class_base",
     "nearest_segment_dist_m",
@@ -12,7 +12,7 @@
   ],
   "n_links": 18,
   "latest_year": 2024,
-  "model_hash": "600762b34c487205",
+  "model_hash": "a4d776e827e197de",
   "metrics": {
     "feature_names": [
       "highway_class_base",
@@ -27,12 +27,12 @@
     "train_rows": 150,
     "val_rows": 150,
     "test_rows": 150,
-    "logistic_auc_val": 0.8952888888888888,
-    "logistic_brier_val": 0.24378296566776014,
-    "boost_auc_val": 0.8840888888888889,
-    "boost_brier_val": 0.24081929609810923,
-    "boost_auc_test": 0.9096888888888889,
-    "boost_brier_test": 0.2200378932382662,
+    "logistic_auc_val": 0.8734222222222223,
+    "logistic_brier_val": 0.16601635095993938,
+    "boost_auc_val": 0.8721777777777779,
+    "boost_brier_val": 0.17344310144482192,
+    "boost_auc_test": 0.9317333333333333,
+    "boost_brier_test": 0.09746753630663871,
     "n_stumps": 140,
     "lr": 0.08
   },

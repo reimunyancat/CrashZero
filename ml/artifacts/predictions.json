@@ -148,7 +148,7 @@
         37.5205
       ]
     ],
-    "risk": 0.9999391205626389,
+    "risk": 0.9999991502485404,
     "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
@@ -174,7 +174,7 @@
         37.5069
       ]
     ],
-    "risk": 0.9872751088656645,
+    "risk": 0.9996233009332676,
     "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
@@ -200,7 +200,7 @@
         37.5188
       ]
     ],
-    "risk": 0.9631603673689005,
+    "risk": 0.9973094929973709,
     "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
@@ -226,7 +226,7 @@
         37.5071
       ]
     ],
-    "risk": 0.9319669492545266,
+    "risk": 0.9971561886391155,
     "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
@@ -252,8 +252,8 @@
         37.5263
       ]
     ],
-    "risk": 0.6953709243679836,
-    "risk_band": "high",
+    "risk": 0.9657666546562134,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 2,
@@ -278,8 +278,8 @@
         37.5267
       ]
     ],
-    "risk": 0.6864863584866009,
-    "risk_band": "high",
+    "risk": 0.9514918244326097,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 1,
@@ -304,8 +304,8 @@
         37.5266065
       ]
     ],
-    "risk": 0.6494444359748942,
-    "risk_band": "high",
+    "risk": 0.9406470116656074,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 1,
@@ -330,8 +330,8 @@
         37.5295661
       ]
     ],
-    "risk": 0.6261034227421588,
-    "risk_band": "high",
+    "risk": 0.9332776101389358,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 1,
@@ -356,8 +356,8 @@
         37.5333
       ]
     ],
-    "risk": 0.5985344883272606,
-    "risk_band": "high",
+    "risk": 0.8995798820523598,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 0,
@@ -382,8 +382,8 @@
         37.5205
       ]
     ],
-    "risk": 0.5722997673653455,
-    "risk_band": "high",
+    "risk": 0.8858416222734486,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 0,
@@ -408,8 +408,8 @@
         37.5223
       ]
     ],
-    "risk": 0.49220359266366825,
-    "risk_band": "medium",
+    "risk": 0.8398502876883279,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 0,
@@ -434,8 +434,8 @@
         37.5229
       ]
     ],
-    "risk": 0.48472896216742817,
-    "risk_band": "medium",
+    "risk": 0.8352731878240373,
+    "risk_band": "very_high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 0,
@@ -460,8 +460,8 @@
         37.502
       ]
     ],
-    "risk": 0.2872407194892855,
-    "risk_band": "low",
+    "risk": 0.7199193199825962,
+    "risk_band": "high",
     "blackspot_count_500m": 0,
     "mean_occrrnc_500m": 0.0,
     "school_zone_count_300m": 1,

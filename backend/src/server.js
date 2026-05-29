@@ -15,11 +15,11 @@ app.use(cors({ origin: env.allowedOrigins, credentials: true }));
 app.use(express.json({ limit: '256kb' }));
 app.use(morgan('tiny'));
 
-app.get('/health', (_req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), node: process.version });
 });
 
-app.get('/model', async (_req, res, next) => {
+app.get('/api/model', async (_req, res, next) => {
   try {
     const m = await getModelManifest();
     const table = await getModelRiskTable();
@@ -33,7 +33,7 @@ app.get('/model', async (_req, res, next) => {
   }
 });
 
-app.get('/cmf-catalog', async (_req, res, next) => {
+app.get('/api/cmf-catalog', async (_req, res, next) => {
   try {
     res.json(await loadCatalog());
   } catch (err) {
@@ -41,10 +41,21 @@ app.get('/cmf-catalog', async (_req, res, next) => {
   }
 });
 
-app.get('/heatmap', async (req, res, next) => {
+app.get('/api/heatmap', async (req, res, next) => {
   try {
     const data = await getFeatures({ force: req.query.refresh === '1' });
     res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/segments/:id', async (req, res, next) => {
+  try {
+    const { features } = await getFeatures();
+    const hit = features.find(f => f.link_id === req.params.id);
+    if (!hit) return res.status(404).json({ error: 'not_found' });
+    res.json(hit); // the simplest SegmentDetail
   } catch (err) {
     next(err);
   }
@@ -56,7 +67,7 @@ const whatifSchema = z.object({
   scenario: z.enum(['A', 'B', 'both']).default('both'),
 });
 
-app.post('/whatif', async (req, res, next) => {
+app.post('/api/whatif', async (req, res, next) => {
   try {
     const body = whatifSchema.parse(req.body);
     const { features } = await getFeatures();
@@ -79,7 +90,7 @@ const budgetSchema = z.object({
   scenario: z.enum(['A', 'B']).default('B'),
 });
 
-app.post('/budget', async (req, res, next) => {
+app.post('/api/budget', async (req, res, next) => {
   try {
     const body = budgetSchema.parse(req.body);
     const { features } = await getFeatures();
@@ -95,7 +106,7 @@ app.post('/budget', async (req, res, next) => {
   }
 });
 
-app.post('/admin/refresh', async (_req, res) => {
+app.post('/api/admin/refresh', async (_req, res) => {
   clearCache();
   const data = await getFeatures({ force: true });
   res.json({ ok: true, source: data.source, count: data.features.length });

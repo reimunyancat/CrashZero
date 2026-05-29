@@ -1,20 +1,20 @@
 // Spatial helpers — no external deps beyond proj4.
 // Used to snap accident points / facility points to ITS LinkIDs in EPSG:5179
 // and to compute haversine distances for the UI.
-import proj4 from 'proj4';
+import proj4 from "proj4";
 
 // Korea 2000 / Unified Coordinate System (ITS / 국가표준)
 proj4.defs(
-  'EPSG:5179',
-  '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs',
+  "EPSG:5179",
+  "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs",
 );
 
 export function wgs84To5179(lng, lat) {
-  return proj4('EPSG:4326', 'EPSG:5179', [lng, lat]);
+  return proj4("EPSG:4326", "EPSG:5179", [lng, lat]);
 }
 
 export function _5179ToWgs84(x, y) {
-  return proj4('EPSG:5179', 'EPSG:4326', [x, y]);
+  return proj4("EPSG:5179", "EPSG:4326", [x, y]);
 }
 
 const R_KM = 6371;
@@ -52,7 +52,10 @@ export function pointToPolylineMeters(lng, lat, polylineWgs84) {
   let best = Infinity;
   for (let i = 0; i < polylineWgs84.length - 1; i++) {
     const [ax, ay] = wgs84To5179(polylineWgs84[i][0], polylineWgs84[i][1]);
-    const [bx, by] = wgs84To5179(polylineWgs84[i + 1][0], polylineWgs84[i + 1][1]);
+    const [bx, by] = wgs84To5179(
+      polylineWgs84[i + 1][0],
+      polylineWgs84[i + 1][1],
+    );
     const d = pointToSegmentMeters(px, py, ax, ay, bx, by);
     if (d < best) best = d;
   }
@@ -63,6 +66,17 @@ export function pointToPolylineMeters(lng, lat, polylineWgs84) {
  * Snap a point to the nearest link within `tolMeters`. Returns { linkId, distance_m } or null.
  * `links` is an array of { link_id, geometry: [[lng,lat], ...] }.
  */
+export function getLinksNearPoint(lng, lat, links, tolMeters = 100) {
+  const matches = [];
+  for (const link of links) {
+    const d = pointToPolylineMeters(lng, lat, link.geometry);
+    if (d <= tolMeters) {
+      matches.push({ link_id: link.link_id, distance_m: d });
+    }
+  }
+  return matches;
+}
+
 export function snapPointToLinks(lng, lat, links, tolMeters = 20) {
   let best = null;
   for (const link of links) {
