@@ -1,5 +1,5 @@
-import { DashboardShell } from '@/components/DashboardShell';
-import { WhatIfPanel } from '@/components/WhatIfPanel';
+import { DashboardShell } from "@/components/DashboardShell";
+import { WhatIfPanel } from "@/components/WhatIfPanel";
 
 export default function WhatIfPage() {
   return (
