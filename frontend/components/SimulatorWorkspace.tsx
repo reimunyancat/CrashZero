@@ -7,7 +7,6 @@ import { RiskLegend } from "./RiskLegend";
 import { SegmentDetailPanel } from "./SegmentDetailPanel";
 import { fetchHeatmap, isFixtureMode } from "@/lib/api";
 import type {
-  Blackspot,
   RiskBand,
   RiskHeatmap,
   RoadSegment,
@@ -87,12 +86,6 @@ export function SimulatorWorkspace() {
     () => filterByBand(adjustedSegments, bandFilter),
     [adjustedSegments, bandFilter],
   );
-
-  const visibleBlackspots: Blackspot[] = useMemo(() => {
-    if (!data) return [];
-    const showsTopRisk = bandFilter.has("very_high") || bandFilter.has("high");
-    return showsTopRisk ? data.blackspots : [];
-  }, [data, bandFilter]);
 
   const counts = useMemo(
     () => countByBand(adjustedSegments),
@@ -218,7 +211,6 @@ export function SimulatorWorkspace() {
             ) : (
               <MapRiskView
                 segments={visibleSegments}
-                blackspots={visibleBlackspots}
                 selectedLinkId={selected?.link_id ?? null}
                 onSelect={setSelected}
               />

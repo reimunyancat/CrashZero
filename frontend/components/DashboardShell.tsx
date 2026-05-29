@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 const NAV_ITEMS: Array<{
   href: string;
@@ -14,27 +13,21 @@ const NAV_ITEMS: Array<{
   {
     href: '/',
     label: '위험도 지도',
-    icon: '/icons/road-risk.svg',
+    icon: '/icons/nav-risk.svg',
     matches: (p) => p === '/',
   },
   {
     href: '/whatif',
     label: 'What-if 시뮬레이션',
-    icon: '/icons/traffic-cone.svg',
+    icon: '/icons/nav-whatif.svg',
     matches: (p) => p.startsWith('/whatif'),
   },
   {
     href: '/budget',
     label: '예산 배분',
-    icon: '/icons/median-barrier.svg',
+    icon: '/icons/nav-budget.svg',
     matches: (p) => p.startsWith('/budget'),
   },
-];
-
-const SECONDARY_NAV: Array<{ href: string; label: string; icon: string }> = [
-  { href: '/?layer=crosswalks', label: '표지/횡단보도 점검', icon: '/icons/crosswalk.svg' },
-  { href: '/?layer=child', label: '어린이 보호구역', icon: '/icons/child-zone.svg' },
-  { href: '/?layer=signal', label: '신호교차로', icon: '/icons/traffic-signal.svg' },
 ];
 
 export function DashboardShell({ children }: { children: ReactNode }) {
@@ -45,7 +38,12 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       <aside className="hidden md:flex w-64 shrink-0 flex-col gap-6 px-5 py-7 border-r border-[rgba(148,163,184,0.10)] bg-[rgba(7,11,18,0.6)] backdrop-blur-md">
         <div className="flex items-center gap-2 px-1">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(125,162,255,0.18)] shadow-glow">
-            <Image src="/icons/road-risk.svg" alt="CrashZero" width={20} height={18} />
+            <span
+              aria-label="CrashZero"
+              className="main-logo-icon"
+              role="img"
+              style={{ '--icon-url': 'url(/icons/road-risk.svg)' } as CSSProperties}
+            />
           </span>
           <div className="leading-tight">
             <div className="text-[15px] font-semibold tracking-wide">CrashZero</div>
@@ -68,30 +66,16 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   (active ? '' : 'hover:bg-[rgba(125,162,255,0.10)] hover:text-ink')
                 }
               >
-                <Image src={item.icon} alt="" width={18} height={18} />
+                <span
+                  aria-hidden="true"
+                  className="nav-main-icon"
+                  style={{ '--icon-url': `url(${item.icon})` } as CSSProperties}
+                />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
-
-        <div className="mt-2">
-          <div className="px-2 text-[11px] uppercase tracking-widest text-[var(--ink-soft)] mb-2">
-            세부 레이어
-          </div>
-          <nav className="flex flex-col gap-1">
-            {SECONDARY_NAV.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="nav-pill flex items-center gap-2.5 hover:bg-[rgba(125,162,255,0.10)] hover:text-ink"
-              >
-                <Image src={item.icon} alt="" width={18} height={18} />
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-        </div>
 
         <div className="mt-auto glass-panel-strong px-3 py-3 text-[11.5px] leading-relaxed text-[var(--ink-muted)]">
           <div className="font-semibold text-ink mb-1">데이터 소스</div>
