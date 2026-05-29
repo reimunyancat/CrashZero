@@ -34,25 +34,20 @@ async function fetchEndpoint(path, year) {
   return Array.isArray(items) ? items : items ? [items] : [];
 }
 
-function normalize(item, kind, sourceWeight, year) {
+function normalize(item, sourceWeight) {
   // KOROAD fields: spot_nm, sido_sgg_nm, occrrnc_cnt, caslt_cnt, dth_dnv_cnt,
   // se_dnv_cnt, sl_dnv_cnt, polygon (geojson string), geom_json.
   const lng = Number(item.lo_crd ?? item.x_crd ?? 0);
   const lat = Number(item.la_crd ?? item.y_crd ?? 0);
   return {
     id: `${item.afos_id ?? item.afos_fid ?? item.bjd_cd ?? ''}-${item.spot_nm ?? ''}`,
-    type: kind === 'child' ? 'frequentzone_child' : 'frequentzone_general',
     label: item.spot_nm ?? '—',
     centroid: [lng, lat],
-    radius_m: 160,
-    source_year: year,
     severity: clamp01(
       Number(item.dth_dnv_cnt ?? 0) * 0.5 + Number(item.se_dnv_cnt ?? 0) * 0.3 + Number(item.sl_dnv_cnt ?? 0) * 0.1,
     ),
-    crashes: Number(item.occrrnc_cnt ?? 0),
     crash_count_3y: Number(item.occrrnc_cnt ?? 0),
     source_weight: sourceWeight,
-    vulnerable_weight: sourceWeight,
   };
 }
 
@@ -70,7 +65,7 @@ export async function fetchBlackspots({ years = [2022, 2023, 2024] } = {}) {
       try {
         const items = await fetchEndpoint(path, year);
         const weight = kind === 'child' ? 0.16 : 0.08;
-        for (const it of items) collected.push(normalize(it, kind, weight, year));
+        for (const it of items) collected.push(normalize(it, weight));
       } catch (err) {
         // Continue — partial data is still useful.
         console.warn('[koroad]', kind, year, err.message);

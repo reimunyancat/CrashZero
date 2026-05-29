@@ -11,7 +11,6 @@ import {
 import { rankInterventionsForSegment } from '@/lib/dualScenario';
 import { INTERVENTION_CATALOG } from '@/lib/cmf';
 import { formatBillion, formatNumber, formatPercent } from '@/lib/format';
-import { iconDimensions } from '@/lib/iconDimensions';
 
 interface Props {
   segment: RoadSegment | null;
@@ -139,13 +138,10 @@ export function SegmentDetailPanel({ segment, blackspots }: Props) {
         <ul className="flex flex-col gap-1 text-[12.5px]">
           {ranked.map((row) => {
             const opt = INTERVENTION_CATALOG[row.id];
-            const iconSize = iconDimensions(opt.icon);
             return (
               <li key={row.id} className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-2 truncate">
-                  <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center">
-                    <Image src={opt.icon ?? '/icons/road-risk.svg'} alt="" {...iconSize} />
-                  </span>
+                  <Image src={opt.icon ?? '/icons/road-risk.svg'} alt="" width={14} height={14} />
                   <span className="truncate">{opt.label}</span>
                 </span>
                 <span className="text-[var(--ink-muted)] tabular-nums whitespace-nowrap">

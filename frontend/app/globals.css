@@ -95,26 +95,6 @@ body {
     color: #050810;
     box-shadow: var(--glow);
   }
-  .nav-main-icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    background: #888A8B;
-    -webkit-mask: var(--icon-url) center / contain no-repeat;
-    mask: var(--icon-url) center / contain no-repeat;
-  }
-  .nav-pill[data-active='true'] .nav-main-icon {
-    background: #212325;
-  }
-  .main-logo-icon {
-    display: inline-block;
-    width: 20px;
-    height: 18px;
-    background: #84A8FC;
-    -webkit-mask: var(--icon-url) center / contain no-repeat;
-    mask: var(--icon-url) center / contain no-repeat;
-  }
 
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;

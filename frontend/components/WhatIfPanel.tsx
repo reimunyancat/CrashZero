@@ -13,7 +13,6 @@ import type {
 } from '@/lib/types';
 import { colorForScore, RISK_BAND_COLOR, scoreToBand } from '@/lib/risk';
 import { formatBillion, formatNumber, formatPercent } from '@/lib/format';
-import { iconDimensions } from '@/lib/iconDimensions';
 
 export function WhatIfPanel() {
   const [segments, setSegments] = useState<RoadSegment[]>([]);
@@ -149,7 +148,6 @@ export function WhatIfPanel() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {ALL_INTERVENTIONS.map((opt) => {
                   const checked = picks.has(opt.id);
-                  const iconSize = iconDimensions(opt.icon);
                   return (
                     <label
                       key={opt.id}
@@ -166,9 +164,7 @@ export function WhatIfPanel() {
                         checked={checked}
                         onChange={() => togglePick(opt.id)}
                       />
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
-                        <Image src={opt.icon ?? '/icons/road-risk.svg'} alt="" {...iconSize} />
-                      </span>
+                      <Image src={opt.icon ?? '/icons/road-risk.svg'} alt="" width={20} height={20} />
                       <div className="flex-1">
                         <div className="font-semibold text-[13px]">{opt.label}</div>
                         <div className="text-[11.5px] text-[var(--ink-muted)]">
